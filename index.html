@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Map Store</title>
+    <style>
+        :root {
+            --mc-green: #55FF55;
+            --mc-dark-green: #388738;
+            --mc-gold: #ffaa00;
+            --mc-bg: #1a1a1a;
+            --mc-border: #555;
+        }
+
+        body {
+            background-color: var(--mc-bg);
+            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://minecraft.wiki/images/Creeper_JE2_BE2.png');
+            background-repeat: repeat;
+            background-size: 150px;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            text-align: center;
+        }
+
+        .header-area {
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.85);
+            border-bottom: 5px solid var(--mc-green);
+        }
+
+        h1 {
+            color: var(--mc-green);
+            text-shadow: 3px 3px 0px #000;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .card {
+            background: #2a2a2a;
+            border: 4px solid var(--mc-border);
+            width: 280px;
+            box-shadow: 8px 8px 0px #000;
+            padding-bottom: 15px;
+        }
+
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+
+        .buy-btn {
+            background-color: #555;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+            border: 3px solid #000;
+            border-top-color: #999;
+            margin: 10px 15px;
+            cursor: pointer;
+        }
+
+        .buy-btn:active { transform: translateY(2px); }
+
+        /* Download Button - Shuru te hidden thakbe */
+        .download-btn {
+            display: none;
+            background-color: var(--mc-green);
+            color: black;
+            padding: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            border: 3px solid #000;
+            margin: 10px 15px;
+            animation: flash 1s infinite;
+        }
+
+        @keyframes flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .info-section {
+            background: rgba(0,0,0,0.9);
+            margin: 40px auto;
+            padding: 30px;
+            max-width: 500px;
+            border: 4px solid var(--mc-gold);
+        }
+
+        .qr-code { width: 200px; border: 5px solid white; margin: 15px 0; }
+
+        footer { padding: 30px; color: #777; }
+    </style>
+</head>
+<body>
+
+    <header class="header-area">
+        <h1>Minecraft Map</h1>
+        <p style="color:var(--mc-gold);">Pay 9 RS & Unlock Download Button</p>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <img src="1768125201723.jpg" alt="Map 1">
+            <div class="card-content">
+                <h3>Chestbox</h3>
+                <a href="upi://pay?pa=bijoyram933-1@oksbi&am=9&cu=INR" class="buy-btn" onclick="showDownload(1)">PAY 9 RS</a>
+                <a href="CHESTBOX_FILE_LINK" id="dl-1" class="download-btn">DOWNLOAD NOW</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="1768125323334.jpg" alt="Map 2">
+            <div class="card-content">
+                <h3>Only Tree</h3>
+                <a href="upi://pay?pa=bijoyram933-1@oksbi&am=9&cu=INR" class="buy-btn" onclick="showDownload(2)">PAY 9 RS</a>
+                <a href="ONLY_TREE_FILE_LINK" id="dl-2" class="download-btn">DOWNLOAD NOW</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="1768135278965.jpg" alt="Map 3">
+            <div class="card-content">
+                <h3>Bamboo Block</h3>
+                <a href="upi://pay?pa=bijoyram933-1@oksbi&am=9&cu=INR" class="buy-btn" onclick="showDownload(3)">PAY 9 RS</a>
+                <a href="BAMBOO_FILE_LINK" id="dl-3" class="download-btn">DOWNLOAD NOW</a>
+            </div>
+        </div>
+    </main>
+
+    <section class="info-section">
+        <h2 style="color: var(--mc-gold);">Contact Support</h2>
+        <p>UPI ID: bijoyram933-1@oksbi</p>
+        <img src="IMG_20261111_203031.jpg" alt="QR" class="qr-code">
+        <p>Contact: Bijoy | +91 7003596042</p>
+    </section>
+
+    <script>
+        function showDownload(id) {
+            // Payment link e click korle 2 second por download button ashbe
+            setTimeout(function() {
+                document.getElementById('dl-' + id).style.display = 'block';
+            }, 2000);
+        }
+    </script>
+
+    <footer>&copy; 2026 Minecraft Map Store</footer>
+</body>
+</html>
