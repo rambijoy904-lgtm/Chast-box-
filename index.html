@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Map Store | Premium</title>
+    <style>
+        :root {
+            --mc-green: #55FF55;
+            --mc-dark-green: #388738;
+            --mc-gold: #ffaa00;
+            --mc-bg: #1a1a1a;
+            --mc-border: #555;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: var(--mc-dark-green); border: 2px solid #111; }
+
+        body {
+            background-color: var(--mc-bg);
+            background-image: 
+                linear-gradient(45deg, #111 25%, transparent 25%), 
+                linear-gradient(-45deg, #111 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #111 75%), 
+                linear-gradient(-45deg, transparent 75%, #111 75%);
+            background-size: 60px 60px;
+            color: #ffffff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        /* Floating Particles Overlay */
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Header Enhancement */
+        .header-area {
+            padding: 60px 20px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.4));
+            border-bottom: 5px solid var(--mc-green);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        h1 {
+            color: var(--mc-green);
+            text-shadow: 5px 5px 0px #000;
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .creeper-mini {
+            width: 50px;
+            filter: drop-shadow(0 0 5px var(--mc-green));
+            animation: mini-bounce 1s infinite alternate ease-in-out;
+        }
+
+        @keyframes mini-bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+
+        .promo-text {
+            font-size: 1.5rem;
+            color: var(--mc-gold);
+            margin-top: 20px;
+            font-weight: bold;
+            text-shadow: 2px 2px #000;
+            animation: flash 1.5s infinite;
+        }
+
+        @keyframes flash {
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        /* Grid Container */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 25px;
+        }
+
+        /* Improved Card Design */
+        .card {
+            background: #2a2a2a;
+            border: 5px solid var(--mc-border);
+            position: relative;
+            transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 12px 12px 0px rgba(0,0,0,0.7);
+        }
+
+        .card:hover {
+            transform: translate(-5px, -5px);
+            border-color: var(--mc-green);
+            box-shadow: 18px 18px 0px rgba(85, 255, 85, 0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 5px solid #000;
+            display: block;
+        }
+
+        .card-content { padding: 20px; }
+
+        .card h3 {
+            font-size: 1.6rem;
+            margin: 0 0 15px 0;
+            text-shadow: 2px 2px #000;
+        }
+
+        /* Professional Minecraft Button */
+        .buy-btn {
+            background-color: #666;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 4px solid #000;
+            border-top-color: #aaa;
+            border-left-color: #aaa;
+            box-shadow: inset -4px -4px 0 #333;
+            transition: all 0.1s;
+        }
+
+        .buy-btn:hover {
+            background-color: var(--mc-dark-green);
+            border-top-color: var(--mc-green);
+            border-left-color: var(--mc-green);
+            transform: scale(0.98);
+        }
+
+        /* Payment Section */
+        .payment-box {
+            background: rgba(0, 0, 0, 0.85);
+            margin: 60px auto;
+            padding: 40px 20px;
+            max-width: 500px;
+            border: 5px solid var(--mc-gold);
+            outline: 5px solid #000;
+            position: relative;
+        }
+
+        .qr-code {
+            width: 240px;
+            border: 10px solid #fff;
+            transition: transform 0.3s;
+            cursor: zoom-in;
+        }
+
+        .qr-code:hover { transform: scale(1.1) rotate(2deg); }
+
+        /* Bottom Walker */
+        .creeper-walker {
+            position: fixed;
+            bottom: 20px;
+            left: -100px;
+            width: 80px;
+            z-index: 1000;
+            filter: drop-shadow(5px 5px 0 #000);
+            pointer-events: none;
+            animation: walking 25s linear infinite;
+        }
+
+        @keyframes walking {
+            0% { left: -100px; transform: scaleX(1); }
+            48% { transform: scaleX(1); }
+            50% { left: 100%; transform: scaleX(-1); }
+            98% { transform: scaleX(-1); }
+            100% { left: -100px; }
+        }
+
+        footer {
+            padding: 60px 20px;
+            background: #000;
+            color: #555;
+            font-size: 0.85rem;
+            border-top: 5px solid #222;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .creeper-mini { width: 35px; }
+            .payment-box { margin: 40px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="particles" id="particles"></div>
+
+    <img src="https://minecraft.wiki/images/Creeper_JE2_BE2.png" class="creeper-walker" alt="Creeper">
+
+    <header class="header-area">
+        <div class="title-wrapper">
+            <img src="https://minecraft.wiki/images/Creeper_JE2_BE2.png" class="creeper-mini" alt="Creeper">
+            <h1>Map Store</h1>
+            <img src="https://minecraft.wiki/images/Creeper_JE2_BE2.png" class="creeper-mini" alt="Creeper">
+        </div>
+        <p class="promo-text">⚠ Limited Time Offer: 9 RS ONLY!</p>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <div class="badge" style="position:absolute; top:10px; right:10px; background:red; padding:5px 10px; font-weight:bold; border:2px solid #000;">HOT</div>
+            <img src="1768125201723.jpg" alt="Chestbox">
+            <div class="card-content">
+                <h3>Chestbox Survival</h3>
+                <a href="upi://pay?pa=your-vpa@upi&pn=Store&am=9&cu=INR" class="buy-btn">BUY DOWNLOAD</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://minecraft.wiki/images/thumb/Woodland_Mansion_Layout.png/300px-Woodland_Mansion_Layout.png" alt="Mansion">
+            <div class="card-content">
+                <h3>Secret Mansion</h3>
+                <a href="upi://pay?pa=your-vpa@upi&pn=Store&am=9&cu=INR" class="buy-btn">BUY DOWNLOAD</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://minecraft.wiki/images/thumb/End_City_Layout.png/300px-End_City_Layout.png" alt="End City">
+            <div class="card-content">
+                <h3>The End Fortress</h3>
+                <a href="upi://pay?pa=your-vpa@upi&pn=Store&am=9&cu=INR" class="buy-btn">BUY DOWNLOAD</a>
+            </div>
+        </div>
+    </main>
+
+    <section class="payment-box">
+        <h2 style="color: var(--mc-gold); margin-top:0;">SECURE CHECKOUT</h2>
+        <p>Scan the QR below with any UPI App</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=your-vpa@upi" class="qr-code" alt="Payment QR">
+        <div style="margin-top:15px; font-weight:bold; color:var(--mc-green);">Price: ₹9.00</div>
+    </section>
+
+    <footer>
+        &copy; 2026 Minecraft Map Store. <br>
+        This site is not affiliated with Mojang AB.
+    </footer>
+
+    <script>
+        // Enhanced Particles Script
+        const container = document.getElementById('particles');
+        const particleCount = 25;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            const size = Math.random() * 6 + 2;
+            particle.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                background: ${Math.random() > 0.5 ? '#55FF55' : '#388738'};
+                opacity: ${Math.random() * 0.6 + 0.2};
+                left: ${Math.random() * 100}vw;
+                top: ${Math.random() * 100}vh;
+                box-shadow: 0 0 ${size}px var(--mc-green);
+                pointer-events: none;
+            `;
+            container.appendChild(particle);
+            animateParticle(particle);
+        }
+
+        function animateParticle(p) {
+            let speed = Math.random() * 2 + 0.5;
+            let currentTop = parseFloat(p.style.top);
+            
+            function move() {
+                currentTop -= 0.1 * speed;
+                if (currentTop < -5) currentTop = 105;
+                p.style.top = currentTop + 'vh';
+                requestAnimationFrame(move);
+            }
+            move();
+        }
+    </script>
+</body>
+</html>
