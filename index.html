@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Map Store Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root[data-theme="dark"] {
+            --mc-bg: #121212;
+            --mc-card-bg: #1e1e1e;
+            --mc-header-bg: rgba(0,0,0,0.8);
+            --mc-border: #2a2a2a;
+            --text-main: #e0e0e0;
+            --text-muted: #aaa;
+            --input-bg: rgba(30, 30, 30, 0.9);
+            --drawer-bg: #151515;
+            --mc-green: #55FF55;
+        }
+
+        :root[data-theme="light"] {
+            --mc-bg: #f4f4f4;
+            --mc-card-bg: #ffffff;
+            --mc-header-bg: rgba(255,255,255,0.9);
+            --mc-border: #dddddd;
+            --text-main: #222222;
+            --text-muted: #666;
+            --input-bg: #ffffff;
+            --drawer-bg: #f9f9f9;
+            --mc-green: #00aa00;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s, color 0.3s; }
+
+        body {
+            background-color: var(--mc-bg);
+            color: var(--text-main);
+            font-family: 'Roboto', sans-serif;
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .pixel-font { font-family: 'Press Start 2P', cursive; text-transform: uppercase; }
+
+        .theme-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 1001;
+            background: var(--mc-green); color: #000;
+            border: none; width: 45px; height: 45px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        header { padding: 60px 20px 40px; text-align: center; background: linear-gradient(180deg, var(--mc-header-bg) 0%, transparent 100%); }
+        h1 { color: var(--mc-green); font-size: 1.4rem; margin-bottom: 25px; text-shadow: 2px 2px 0 #000; }
+
+        .search-container { max-width: 500px; margin: 0 auto; position: relative; }
+        .search-container i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        #mapSearch {
+            width: 100%; padding: 15px 20px 15px 50px; background: var(--input-bg);
+            border: 2px solid var(--mc-border); border-radius: 50px; color: var(--text-main); font-size: 1rem;
+        }
+
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+
+        .card { background: var(--mc-card-bg); border-radius: 12px; border: 1px solid var(--mc-border); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: var(--mc-green); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .card-img { height: 180px; width: 100%; object-fit: cover; }
+
+        .card-content { padding: 15px; flex-grow: 1; }
+        .map-title { font-size: 0.8rem; margin: 10px 0; text-align: center; min-height: 40px; color: var(--mc-green); }
+
+        .stats { display: flex; justify-content: space-around; background: var(--mc-bg); padding: 8px; border-radius: 8px; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; }
+
+        .interaction-bar { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .icon-btn { background: transparent; border: 1px solid var(--mc-border); color: var(--text-muted); padding: 8px; border-radius: 6px; cursor: pointer; flex: 1; margin: 0 3px; font-size: 0.8rem; }
+        .icon-btn:hover { color: var(--mc-green); border-color: var(--mc-green); }
+        .icon-btn.liked { color: #ff4444; border-color: #ff4444; }
+
+        .download-btn {
+            background: var(--mc-green); color: #000; border: none; padding: 12px; border-radius: 6px;
+            font-weight: bold; text-align: center; text-decoration: none; font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem; display: block; width: 100%;
+        }
+
+        .comments-drawer { display: none; background: var(--drawer-bg); padding: 15px; border-top: 1px solid var(--mc-border); max-height: 150px; overflow-y: auto; }
+        .comment-item { font-size: 0.8rem; margin-bottom: 8px; border-bottom: 1px solid var(--mc-border); padding-bottom: 5px; color: var(--text-main); }
+        .comment-item strong { color: var(--mc-green); }
+
+        /* Support Section */
+        .section-box { background: var(--mc-card-bg); margin: 40px auto; padding: 30px; max-width: 600px; border-radius: 12px; border: 1px solid var(--mc-border); text-align: center; }
+        .qr-code { width: 160px; border: 4px solid var(--mc-green); border-radius: 8px; margin: 15px 0; }
+
+        #commentModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--mc-card-bg); padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid var(--mc-green); }
+        textarea { width: 100%; height: 80px; background: var(--mc-bg); color: var(--text-main); border: 1px solid var(--mc-border); border-radius: 8px; padding: 10px; margin: 10px 0; resize: none; }
+
+        footer { padding: 40px; text-align: center; color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--mc-border); }
+    </style>
+</head>
+<body>
+
+    <button class="theme-toggle" onclick="toggleTheme()"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+
+    <header>
+        <h1>MINECRAFT MAP STORE PRO</h1>
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="mapSearch" placeholder="Search your favorite map..." onkeyup="filterMaps()">
+        </div>
+    </header>
+
+    <div class="container" id="mapGrid">
+        </div>
+
+    <div class="section-box">
+        <h2 style="color: #ff55ff;"><i class="fa-solid fa-heart"></i> Support My Work</h2>
+        <p>UPI ID: <strong>bijoyram933-1@oksbi</strong></p>
+        <img src="IMG_20260111_203031.jpg" alt="QR Code" class="qr-code">
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Contact: +91 7003596042</p>
+    </div>
+
+    <div id="commentModal">
+        <div class="modal-content">
+            <h3 class="pixel-font" style="font-size: 0.7rem; color: var(--mc-green);">Add Review</h3>
+            <textarea id="commentInput" placeholder="Write your review here..."></textarea>
+            <button class="download-btn" onclick="submitComment()">POST REVIEW</button>
+            <button style="width:100%; background:none; border:none; color:var(--text-muted); margin-top:10px; cursor:pointer;" onclick="closeCommentModal()">CANCEL</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Minecraft Map Store Pro | Built with ❤️ by Bijoy</p>
+    </footer>
+
+    <script>
+        const maps = [
+            { id: 1, title: "Ultimate Skyblock", size: "2.40 MB", dl: "15K", img: "image.jpg%202.40MB", file: "skyblock.mcworld" },
+            { id: 2, title: "Aquablock World", size: "2.07 MB", dl: "8.2K", img: "image-1.jpg%202.07MB", file: "Aquablock.mcworld" },
+            { id: 3, title: "Lucky Block Race", size: "152 KB", dl: "25K", img: "image-2.jpg%20152KB", file: "Lucky%20block.mcworld" },
+            { id: 4, title: "OP Chest Survival", size: "4.07 MB", dl: "10K", img: "image-3.jpg%204.07MB", file: "OP%20chest.mcworld" },
+            { id: 5, title: "Floating Home", size: "Map", dl: "5.4K", img: "1768134922465.jpg", file: "floting%20home.mcworld" },
+            { id: 6, title: "Only Tree Survival", size: "Map", dl: "7.1K", img: "1768125323334.jpg", file: "onlytree.mcworld" },
+            { id: 7, title: "Only Water World", size: "Map", dl: "4.2K", img: "1768140768431.jpg", file: "onlywater.mcworld" },
+            { id: 8, title: "Bamboo Block", size: "Map", dl: "3.8K", img: "1768135278965.jpg", file: "bamboo%20block.mcworld" },
+            { id: 9, title: "Chestbox World", size: "Map", dl: "6.2K", img: "1768125201723.jpg", file: "chastbox.mcworld" }
+        ];
+
+        function renderMaps() {
+            const grid = document.getElementById('mapGrid');
+            grid.innerHTML = '';
+            maps.forEach(map => {
+                const randomLikes = Math.floor(Math.random() * 5000) + 500; // Random likes between 500 and 5500
+                grid.innerHTML += `
+                <div class="card">
+                    <img src="${map.img}" class="card-img" alt="${map.title}">
+                    <div class="card-content">
+                        <h3 class="map-title">${map.title}</h3>
+                        <div class="stats">
+                            <span><i class="fa-solid fa-file"></i> ${map.size}</span>
+                            <span><i class="fa-solid fa-download"></i> ${map.dl}</span>
+                        </div>
+                        <div class="interaction-bar">
+                            <button class="icon-btn" onclick="toggleLike(this, 'l-${map.id}')"><i class="fa-solid fa-heart"></i> <span id="l-${map.id}">${randomLikes}</span></button>
+                            <button class="icon-btn" onclick="shareMap('${map.title}')"><i class="fa-solid fa-share-nodes"></i></button>
+                            <button class="icon-btn" onclick="toggleComments(${map.id})"><i class="fa-solid fa-comment"></i> Review</button>
+                        </div>
+                        <a href="${map.file}" class="download-btn" download>DOWNLOAD NOW</a>
+                    </div>
+                    <div id="comments-${map.id}" class="comments-drawer">
+                        <div class="comment-list">
+                            <div class="comment-item"><strong>Steve:</strong> Awesome map!</div>
+                        </div>
+                        <button style="width:100%; background:none; border:1px dashed var(--mc-green); color:var(--mc-green); margin-top:10px; cursor:pointer; padding:5px; border-radius:5px;" onclick="openCommentModal(${map.id})">+ Add Review</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        function filterMaps() {
+            let input = document.getElementById('mapSearch').value.toLowerCase();
+            let cards = document.getElementsByClassName('card');
+            for (let card of cards) {
+                let title = card.querySelector('.map-title').innerText.toLowerCase();
+                card.style.display = title.includes(input) ? "flex" : "none";
+            }
+        }
+
+        function toggleLike(btn, id) {
+            let span = document.getElementById(id);
+            let count = parseInt(span.innerText);
+            if(btn.classList.toggle('liked')) {
+                span.innerText = count + 1;
+            } else {
+                span.innerText = count - 1;
+            }
+        }
+
+        function shareMap(title) {
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: 'Check out this amazing Minecraft map!',
+                    url: window.location.href
+                });
+            } else {
+                alert('Link Copied to Clipboard!');
+            }
+        }
+
+        function toggleComments(id) {
+            const drawer = document.getElementById('comments-' + id);
+            drawer.style.display = (drawer.style.display === 'block') ? 'none' : 'block';
+        }
+
+        let activeId = null;
+        function openCommentModal(id) {
+            activeId = id;
+            document.getElementById('commentModal').style.display = 'flex';
+        }
+
+        function closeCommentModal() {
+            document.getElementById('commentModal').style.display = 'none';
+            document.getElementById('commentInput').value = '';
+        }
+        
+        function submitComment() {
+            const text = document.getElementById('commentInput').value;
+            if(!text.trim()) return;
+            const list = document.querySelector(`#comments-${activeId} .comment-list`);
+            const newComment = document.createElement('div');
+            newComment.className = 'comment-item';
+            newComment.innerHTML = `<strong>You:</strong> ${text}`;
+            list.appendChild(newComment);
+            closeCommentModal();
+        }
+
+        // Initialize maps on load
+        window.onload = renderMaps;
+    </script>
+</body>
+</html>
+
